@@ -7,32 +7,37 @@ const DEBOUNCE_DELAY = 300;
 const input = document.getElementById("search-box")
 const countryInfo = document.querySelector(".country-info")
 const countryList = document.querySelector(".country-list")
-let searchCountry = ''
+let searchCountry = ""
 
-input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
+input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY))
 
 function onInput(e) {
-    searchCountry = e.target.value.trim();
+    searchCountry = e.target.value.trim()
 
     if (searchCountry) {
         fetchCountries(searchCountry)
-        .then(response => {
-            if (!response.ok && searchCountry !== '') {
+            .then(response => {
+                clearCountryList()
+                clearCountryInEl()
+            if (!response.ok && searchCountry !== "") {
                 Notiflix.Notify.failure('Oops, there is no country with that name')
             }
-            return response.json();
+            return response.json()
         })        
-        .then((country) => {  
+            .then((country) => {
+                clearCountryList()
+                clearCountryInEl()
             if (country.length > 10) {  
-                Notiflix.Notify.warning('Too many matches found. Please enter a more specific name.');  
+                Notiflix.Notify.warning('Too many matches found. Please enter a more specific name.')
             }
-            if (country.length > 1 && country.length <=10) {
+            if (country.length > 1 && country.length <= 10) {
+                clearCountryInEl()
                 const markup = createMarkupCountryList(country)
-                return updateListMarkup(markup);
+                return updateListMarkup(markup)
                 
             }
             if (country.length === 1) {
-                resetCountryList();
+                clearCountryList()
                 const markup = createMarkupCountryData(country) 
                 return updateCountryMarkup(markup)
             }           
@@ -44,15 +49,17 @@ function onInput(e) {
 };
 
 function updateCountryMarkup(markup) {
-     countryInfo.innerHTML = markup;
+     countryInfo.innerHTML = markup
 };
 function updateListMarkup(markup) {
-    countryList.innerHTML = markup;
+    countryList.innerHTML = markup
 }
-function resetCountryList() {
-    countryList.innerHTML = "";
+function clearCountryList() {
+    countryList.innerHTML = ""
 }
-
+function clearCountryInEl() {
+    countryInfo.innerHTML = ""
+}
 
 
 function createMarkupCountryData(country) {   
@@ -64,8 +71,8 @@ function createMarkupCountryData(country) {
     <p> Capital: ${country.capital}</p>
     <p> Population: ${country.population}</p>
     <p> Languages: ${Object.values(country.languages).join(",")}</p>
-    `).join("");
-};
+    `).join("")
+}
 
  function createMarkupCountryList(country) {
     return country.map(country => 
@@ -75,5 +82,5 @@ function createMarkupCountryData(country) {
         <img src="${country.flags.svg}" width="30px" height="30px">
         </span> ${country.name.official}
     </li>
-        `).join("");
+        `).join("")
 };
